@@ -19,6 +19,18 @@ module.exports = {
       resolve: `gatsby-plugin-create-client-paths`,
       options: { prefixes: [`/App/*`] },
     },
+    {
+      resolve: `gatsby-plugin-google-fonts-v2`,
+      options: {
+        fonts: [
+          {
+            family: 'Roboto',
+            weights: ['300', '400', '500', '900'],
+          },
+        ],
+        display: 'block',
+      },
+    },
     // {
     //   resolve: `gatsby-plugin-manifest`,
     //   options: {
