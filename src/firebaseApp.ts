@@ -2,12 +2,12 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 
 const app = firebase.initializeApp({
-  apiKey: process.env.GATSBY_FIREBASE_API,
-  authDomain: process.env.GATSBY_FIREBASE_AUTHDOMAIN,
-  projectId: process.env.GATSBY_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.GATSBY_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.GATSBY_FIREBASE_MESSEGING_SENDER_ID,
-  appId: process.env.GATSBY_FIREBASE_APP_ID,
+  apiKey: 'AIzaSyBnOWAx_h25UzWK43v6JwIbrFN9l3j01ms',
+  authDomain: 'firetodo-abcd8.firebaseapp.com',
+  projectId: 'firetodo-abcd8',
+  storageBucket: 'firetodo-abcd8.appspot.com',
+  messagingSenderId: '542370247096',
+  appId: '1:542370247096:web:584c6dae87e75028ea9f4d',
 })
 
 export default app

@@ -7,9 +7,9 @@ import ProfilePage from '../components/clientRoutes/Profile'
 
 const App = () => {
   return (
-    <Router basepath="/App">
-      <Route path="/" component={DashboardPage} />
-      <PrivateRoute path="/Profile" component={ProfilePage} />
+    <Router>
+      <Route path="/App" component={DashboardPage} />
+      <PrivateRoute path="/App/Profile" component={ProfilePage} />
     </Router>
   )
 }

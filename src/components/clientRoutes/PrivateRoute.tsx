@@ -1,10 +1,7 @@
-import React from 'react'
-import { WindowLocation } from '@reach/router'
-import { RouteComponentProps, Redirect } from '@reach/router'
-
-const isLoggedIn = () => {
-  return false
-}
+import React, { useContext, useEffect } from 'react'
+import { navigate, Redirect, WindowLocation } from '@reach/router'
+import { RouteComponentProps } from '@reach/router'
+import { AuthContext } from '../AuthContext'
 
 interface Props extends RouteComponentProps {
   component: React.FC
@@ -16,13 +13,8 @@ const PrivateRoute: React.FC<Props> = ({
   location,
   ...rest
 }) => {
-  const isAuth =
-    !isLoggedIn() && location!.pathname !== `/Login/` ? false : true
+  const user = useContext(AuthContext)
 
-  return isAuth ? (
-    <Component {...rest} />
-  ) : (
-    <Redirect from={location?.pathname} to="/Login/" />
-  )
+  return user ? <Component {...rest} /> : <>You are not logged in</>
 }
 export default PrivateRoute
