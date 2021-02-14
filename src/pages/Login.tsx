@@ -1,28 +1,20 @@
-import React from 'react'
-import { Formik, Form, FormikHelpers, Field } from 'formik'
+import React, { useContext } from 'react'
+import { Formik, Form, Field } from 'formik'
 import { Button } from '@material-ui/core'
 import { TextField } from 'formik-material-ui'
-import * as Yup from 'yup'
-import { navigate } from 'gatsby'
-import firebaseApp from '../firebaseApp'
-
-const SignupSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-})
-
-interface Props {}
+import { FaunaContext } from '../context/FaunaContext'
+import login from '../utils/login'
+import { AuthContext } from '../context/AuthContext'
+import loginSchema from '../components/yupSchemas/loginSchema'
 
 interface Values {
   password: string
   email: string
 }
 
-function SignUp(props: Props) {
-  const {} = props
+function SignUp() {
+  const faunaContext = useContext(FaunaContext)
+  const user = useContext(AuthContext)
 
   return (
     <div>
@@ -32,17 +24,10 @@ function SignUp(props: Props) {
           password: '',
           email: '',
         }}
-        validationSchema={SignupSchema}
-        onSubmit={async (
-          { password, email }: Values,
-          { setSubmitting }: FormikHelpers<Values>
-        ) => {
+        validationSchema={loginSchema}
+        onSubmit={async ({ password, email }: Values) => {
           try {
-            const userCredential = await firebaseApp
-              .auth()
-              .signInWithEmailAndPassword(email, password)
-            console.log(userCredential)
-            navigate('/App/')
+            await login({ email, password, user, faunaContext })
           } catch (error) {
             console.log(error)
           }

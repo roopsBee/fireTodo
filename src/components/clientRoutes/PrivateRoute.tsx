@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { navigate, Redirect, WindowLocation } from '@reach/router'
 import { RouteComponentProps } from '@reach/router'
-import { AuthContext } from '../AuthContext'
+import { AuthContext } from '../../context/AuthContext'
 
 interface Props extends RouteComponentProps {
   component: React.FC

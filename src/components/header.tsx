@@ -1,41 +1,51 @@
 import { Link } from 'gatsby'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Button } from '@material-ui/core'
+import { AuthContext } from '../context/AuthContext'
+import firebaseApp from '../firebaseApp'
+import { navigate } from 'gatsby'
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      background: `rebeccapurple`,
-      marginBottom: `1.45rem`,
-    }}
-  >
-    <div
+const Header = () => {
+  const user = useContext(AuthContext)
+  const handleSignOut = () => {
+    firebaseApp.auth().signOut()
+    navigate('/')
+  }
+
+  return (
+    <header
       style={{
-        margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
+        background: `rebeccapurple`,
+        marginBottom: `1.45rem`,
       }}
     >
-      <Button component={Link} to="/">
-        {siteTitle}
-      </Button>
-      <Button component={Link} to="/Login/">
-        Login
-      </Button>
-      <Button component={Link} to="/App/">
-        App
-      </Button>
-    </div>
-  </header>
-)
+      <div
+        style={{
+          margin: `0 auto`,
+          maxWidth: 960,
+          padding: `1.45rem 1.0875rem`,
+        }}
+      >
+        <Button component={Link} to="/App/">
+          App
+        </Button>
 
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-}
-
-Header.defaultProps = {
-  siteTitle: ``,
+        {user ? (
+          <Button onClick={handleSignOut}>Sign Out</Button>
+        ) : (
+          <>
+            <Button component={Link} to="/Login/">
+              Login
+            </Button>
+            <Button component={Link} to="/SignUp/">
+              Sign Up
+            </Button>
+          </>
+        )}
+      </div>
+    </header>
+  )
 }
 
 export default Header

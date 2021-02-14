@@ -1,23 +1,12 @@
-import React from 'react'
-import { Formik, Form, FormikHelpers, Field } from 'formik'
+import React, { useContext } from 'react'
+import { Formik, Form, Field } from 'formik'
 import { Button } from '@material-ui/core'
 import { TextField } from 'formik-material-ui'
-import * as Yup from 'yup'
 import firebaseApp from '../firebaseApp'
-import { navigate } from 'gatsby'
-
-const SignupSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string()
-    .min(6, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password')], "Passwords don't match")
-    .required('Required'),
-})
-
-interface Props {}
+import { FaunaContext } from '../context/FaunaContext'
+import login from '../utils/login'
+import { AuthContext } from '../context/AuthContext'
+import signupSchema from '../components/yupSchemas/signupSchema'
 
 interface Values {
   password: string
@@ -25,8 +14,9 @@ interface Values {
   email: string
 }
 
-function SignUp(props: Props) {
-  const {} = props
+function SignUp() {
+  const faunaContext = useContext(FaunaContext)
+  const user = useContext(AuthContext)
 
   return (
     <div>
@@ -37,17 +27,15 @@ function SignUp(props: Props) {
           confirmPassword: '',
           email: '',
         }}
-        validationSchema={SignupSchema}
-        onSubmit={async (
-          { email, password }: Values,
-          { setSubmitting }: FormikHelpers<Values>
-        ) => {
+        validationSchema={signupSchema}
+        onSubmit={async ({ email, password }: Values) => {
           try {
-            const userCredentials = await firebaseApp
+            await firebaseApp
               .auth()
               .createUserWithEmailAndPassword(email, password)
-            console.log(userCredentials)
-            navigate('/App/')
+            console.log('Created new user')
+
+            await login({ email, password, faunaContext, user })
           } catch (error) {
             console.log(error)
           }

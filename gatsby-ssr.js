@@ -7,13 +7,16 @@
 // You can delete this file if you're not using it
 import React from 'react'
 
-import { TodoProvider } from './src/components/TodoContext'
-import { AuthProvider } from './src/components/AuthContext'
+import { TodoProvider } from './src/context/TodoContext'
+import { AuthProvider } from './src/context/AuthContext'
+import { FaunaProvider } from './src/context/FaunaContext'
 
 export const wrapRootElement = ({ element }) => {
   return (
     <AuthProvider>
-      <TodoProvider>{element}</TodoProvider>
+      <FaunaProvider>
+        <TodoProvider>{element}</TodoProvider>
+      </FaunaProvider>
     </AuthProvider>
   )
 }
