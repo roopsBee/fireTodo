@@ -1,32 +1,36 @@
 import React, { useState, createContext } from 'react'
+import testData from '../testData'
 
 interface Props {
   children?: any
 }
 
-interface StateValue {
-  todo: string
+type TodoListType = {
+  name: string
+  uid: number
+  id: number
+  todos: TodoType[]
+}
+
+type TodoType = {
+  text: string
   priority: string
   id: number
+  done: boolean
 }
 
 type ContextValue = [
-  StateValue[],
-  React.Dispatch<React.SetStateAction<[] | StateValue[]>>
+  TodoListType[],
+  React.Dispatch<React.SetStateAction<[] | TodoListType[]>>
 ]
 
 export const TodoContext = createContext<ContextValue | []>([])
 
 export const TodoProvider: React.FC<Props> = ({ children }) => {
-  const [todos, setTodos] = useState<StateValue[] | []>([
-    { todo: 'make house', priority: 'low', id: 1 },
-    { todo: 'make pizza', priority: 'high', id: 2 },
-    { todo: 'fly around earth', priority: 'medium', id: 3 },
-    { todo: 'make cake', priority: 'high', id: 4 },
-  ])
+  const [todoLists, setTodoLists] = useState<TodoListType[] | []>([])
 
   return (
-    <TodoContext.Provider value={[todos, setTodos]}>
+    <TodoContext.Provider value={[todoLists, setTodoLists]}>
       {children}
     </TodoContext.Provider>
   )

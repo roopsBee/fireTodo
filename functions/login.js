@@ -23,30 +23,35 @@ const handler = async (event) => {
     })
     const q = faunadb.query
 
+    // create user if doesn't exist, and get fauna token
+    const res = await client.query(
+      q.Call(q.Function('create_and_login_user'), [email, uid])
+    )
+    const { secret } = res
     // check if user exists
-    const exists = await client.query(
-      q.Exists(q.Match(q.Index('users_by_email'), email))
-    )
+    // const exists = await client.query(
+    //   q.Exists(q.Match(q.Index('users_by_email'), email))
+    // )
 
-    // if user doesn't exist create user
-    if (!exists) {
-      await client.query(
-        q.Create(q.Collection('users'), {
-          credentials: { password: uid },
-          data: {
-            email: email,
-          },
-        })
-      )
-      console.log('created fauna user')
-    }
+    // // if user doesn't exist create user
+    // if (!exists) {
+    //   await client.query(
+    //     q.Create(q.Collection('users'), {
+    //       credentials: { password: uid },
+    //       data: {
+    //         email: email,
+    //       },
+    //     })
+    //   )
+    //   console.log('created fauna user')
+    // }
 
-    // fauna login
-    const { secret } = await client.query(
-      q.Login(q.Match(q.Index('users_by_email'), email), { password: uid })
-    )
-    console.log('Got fauna secret')
+    // // fauna login
+    // const { secret, instance } = await client.query(
+    //   q.Login(q.Match(q.Index('users_by_email'), email), { password: uid })
+    // )
 
+    // console.log('Got fauna secret')
     return {
       statusCode: 200,
       body: JSON.stringify({ secret }),

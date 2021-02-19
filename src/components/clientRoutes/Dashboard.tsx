@@ -21,15 +21,6 @@ const Dashboard = () => {
     navigate('/')
   }
 
-  const handleApi = async () => {
-    try {
-      const res = await axios.get('/.netlify/functions/hello-world?name=roops')
-      console.log(res.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   return (
     <div>
       <p>My dashboard</p>
@@ -45,9 +36,6 @@ const Dashboard = () => {
       )}
       <Button component={Link} to="/App/Profile/" variant="contained">
         Profile
-      </Button>
-      <Button onClick={handleApi} variant="contained">
-        Api
       </Button>
     </div>
   )

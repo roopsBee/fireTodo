@@ -27,13 +27,14 @@ const login: LoginFn = async ({ email, password, user, faunaContext }) => {
     //log into fauna
     const userIdToken = await firebaseApp.auth().currentUser?.getIdToken(true)
     console.log('Got user id token')
+
     // get faunadb secret with user token
     const { data } = await axios.post('/.netlify/functions/login', {
       userIdToken,
     })
 
     const { secret } = data
-    console.log('Got fauna secret')
+    console.log('Got fauna secret', data)
 
     setFaunaState
       ? setFaunaState({ secret })
