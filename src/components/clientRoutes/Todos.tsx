@@ -6,6 +6,8 @@ import {
   Container,
   ListItemSecondaryAction,
   IconButton,
+  Checkbox,
+  ListItemIcon,
 } from '@material-ui/core'
 import { Delete as DeleteIcon } from '@material-ui/icons'
 import { TodoContext } from '../../context/TodoContext'
@@ -17,6 +19,8 @@ import ListSelect from '../ListSelect'
 import { TodoType } from '../../context/TodoContext'
 
 type HandleDeleteTodoType = (todo: TodoType) => void
+
+type HandleCheckboxToggleType = (todo: TodoType, index: number) => void
 
 export type HandleAddListType = (listName: string) => void
 
@@ -86,6 +90,15 @@ const Todos = () => {
     }
   }
 
+  const handleCheckboxToggle: HandleCheckboxToggleType = ({ done }, index) => {
+    if (todoLists && setTodoLists) {
+      const doneToggledValue = (done = !done)
+      const updatedLists = cloneDeep(todoLists)
+      updatedLists[selectedList].todos[index].done = doneToggledValue
+      setTodoLists(updatedLists)
+    }
+  }
+
   return (
     <Container>
       <AddNewList handleAddNewList={handleAddNewList} />
@@ -103,22 +116,35 @@ const Todos = () => {
       {!isEmpty(todoLists) && (
         <List>
           {todoLists &&
-            todoLists[selectedList].todos.map((todo) => (
-              <ListItem key={todo.id}>
-                <ListItemText primary={todo.text} secondary={todo.priority} />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    onClick={() => {
-                      handleDeleteTodo(todo)
-                    }}
-                    edge="end"
-                    aria-label="delete"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
+            todoLists[selectedList].todos.map((todo, index) => {
+              const checkboxLabelId = `checkbox-list-label-${todo.text}`
+              return (
+                <ListItem key={todo.id}>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={todo.done}
+                      inputProps={{ 'aria-labelledby': checkboxLabelId }}
+                      onChange={() => handleCheckboxToggle(todo, index)}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    id={checkboxLabelId}
+                    primary={todo.text}
+                    secondary={todo.priority}
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton
+                      onClick={() => handleDeleteTodo(todo)}
+                      edge="end"
+                      aria-label="delete"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              )
+            })}
         </List>
       )}
     </Container>

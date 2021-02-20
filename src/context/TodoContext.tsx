@@ -27,7 +27,7 @@ type ContextValue = [
 export const TodoContext = createContext<ContextValue | []>([])
 
 export const TodoProvider: React.FC<Props> = ({ children }) => {
-  const [todoLists, setTodoLists] = useState<TodoListType[] | []>([])
+  const [todoLists, setTodoLists] = useState<TodoListType[] | []>(testData)
 
   return (
     <TodoContext.Provider value={[todoLists, setTodoLists]}>
