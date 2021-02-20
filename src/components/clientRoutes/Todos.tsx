@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import {
   List,
   ListItem,
@@ -9,11 +9,16 @@ import {
 } from '@material-ui/core'
 import { Delete as DeleteIcon } from '@material-ui/icons'
 import { TodoContext } from '../../context/TodoContext'
+import { cloneDeep, isEmpty } from 'lodash'
 import AddTodoForm from '../AddTodoForm'
-import { cloneDeep } from 'lodash'
-import ListSelect from '../ListSelect'
+import DeleteList from '../DeleteList'
 import AddNewList from '../AddNewList'
-import { isEmpty } from 'lodash'
+import ListSelect from '../ListSelect'
+import { TodoType } from '../../context/TodoContext'
+
+type HandleDeleteTodoType = (todo: TodoType) => void
+
+export type HandleAddListType = (listName: string) => void
 
 export type TodoValues = {
   text: string
@@ -23,6 +28,8 @@ export type TodoValues = {
 const Todos = () => {
   const [todoLists, setTodoLists] = useContext(TodoContext)
   const [selectedList, setSelectedList] = useState(0)
+
+  useEffect(() => {}, [todoLists])
 
   const handleChangeList = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedList(event.target.value as number)
@@ -43,20 +50,56 @@ const Todos = () => {
     }
   }
 
-  const handleDeleteTodo = () => {}
+  const handleDeleteList = () => {
+    if (todoLists && setTodoLists) {
+      const updatedLists = cloneDeep(todoLists)
+      updatedLists?.splice(selectedList, 1)
+      setSelectedList(0)
+      setTodoLists(updatedLists)
+    }
+  }
+
+  const handleAddNewList: HandleAddListType = (listName) => {
+    const name = listName
+    const id = Math.floor(Math.random() * 10000)
+    const uid = 123456
+    const todos: [] = []
+    const newList = { name, id, uid, todos }
+    const updatedLists = cloneDeep(todoLists)
+    if (updatedLists && setTodoLists && todoLists) {
+      updatedLists.push(newList)
+      setTodoLists(updatedLists)
+      setSelectedList(todoLists?.length)
+    } else {
+      console.log('Unable to create new list')
+    }
+  }
+
+  const handleDeleteTodo: HandleDeleteTodoType = (todo) => {
+    if (todoLists && setTodoLists) {
+      const newTodos = todoLists[selectedList].todos.filter(
+        (item) => item.id !== todo.id
+      )
+      const updatedLists = cloneDeep(todoLists)
+      updatedLists[selectedList].todos = newTodos
+      setTodoLists(updatedLists)
+    }
+  }
 
   return (
     <Container>
+      <AddNewList handleAddNewList={handleAddNewList} />
       {!isEmpty(todoLists) && (
         <>
           <AddTodoForm handleAddTodo={handleAddTodo} />
+          <DeleteList handleDeleteList={handleDeleteList} />
           <ListSelect
             selectedList={selectedList}
             handleChangeList={handleChangeList}
           />
         </>
       )}
-      <AddNewList />
+
       {!isEmpty(todoLists) && (
         <List>
           {todoLists &&
@@ -66,12 +109,7 @@ const Todos = () => {
                 <ListItemSecondaryAction>
                   <IconButton
                     onClick={() => {
-                      // const newTodos = todos.filter(
-                      //   (item) => item.todo !== todo.todo
-                      // )
-                      // setTodos
-                      //   ? setTodos(newTodos)
-                      //   : console.log('cannot setTodos')
+                      handleDeleteTodo(todo)
                     }}
                     edge="end"
                     aria-label="delete"

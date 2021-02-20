@@ -12,7 +12,7 @@ type TodoListType = {
   todos: TodoType[]
 }
 
-type TodoType = {
+export type TodoType = {
   text: string
   priority: string
   id: number

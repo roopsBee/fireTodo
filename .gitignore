@@ -73,3 +73,5 @@ yarn-error.log
 
 # fauna db
 .faunarc
+
+todo.md

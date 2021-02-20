@@ -7,8 +7,13 @@ import {
   bindPopover,
 } from 'material-ui-popup-state/hooks'
 import NewListForm from './NewListForm'
+import { HandleAddListType } from './clientRoutes/Todos'
 
-const AddNewList = () => {
+interface Props {
+  handleAddNewList: HandleAddListType
+}
+
+const AddNewList: React.FC<Props> = ({ handleAddNewList }) => {
   const popupState = usePopupState({
     variant: 'popover',
     popupId: 'add-new-list-popover',
@@ -30,7 +35,10 @@ const AddNewList = () => {
           horizontal: 'center',
         }}
       >
-        <NewListForm popupState={popupState} />
+        <NewListForm
+          handleAddNewList={handleAddNewList}
+          popupState={popupState}
+        />
       </Popover>{' '}
     </>
   )
