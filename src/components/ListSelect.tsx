@@ -21,7 +21,7 @@ const ListSelect: React.FC<Props> = ({ selectedList, handleChangeList }) => {
           onChange={handleChangeList}
         >
           {todoLists?.map((list, index) => (
-            <MenuItem key={list.id} value={index}>
+            <MenuItem key={JSON.stringify(list.listId)} value={index}>
               {list.name}
             </MenuItem>
           ))}

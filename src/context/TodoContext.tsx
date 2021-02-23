@@ -1,4 +1,5 @@
 import React, { useState, createContext } from 'react'
+import faunadb from 'faunadb'
 import testData from '../testData'
 
 interface Props {
@@ -7,15 +8,15 @@ interface Props {
 
 type TodoListType = {
   name: string
-  uid: number
-  id: number
+  uid: string | null | undefined
+  listId: object | undefined
   todos: TodoType[]
 }
 
 export type TodoType = {
   text: string
   priority: string
-  id: number
+  todoId: {} | null | undefined
   done: boolean
 }
 
@@ -27,7 +28,7 @@ type ContextValue = [
 export const TodoContext = createContext<ContextValue | []>([])
 
 export const TodoProvider: React.FC<Props> = ({ children }) => {
-  const [todoLists, setTodoLists] = useState<TodoListType[] | []>(testData)
+  const [todoLists, setTodoLists] = useState<TodoListType[] | []>([])
 
   return (
     <TodoContext.Provider value={[todoLists, setTodoLists]}>

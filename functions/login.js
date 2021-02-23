@@ -13,7 +13,7 @@ const handler = async (event) => {
       })
     }
     console.log('Admin initialized')
-    const { userIdToken } = JSON.parse(event.body)
+    const { userIdToken, userName } = JSON.parse(event.body)
     const { uid, email } = await admin.auth().verifyIdToken(userIdToken)
     console.log('Got decoded token')
 
@@ -25,36 +25,13 @@ const handler = async (event) => {
 
     // create user if doesn't exist, and get fauna token
     const res = await client.query(
-      q.Call(q.Function('create_and_login_user'), [email, uid])
+      q.Call(q.Function('create_and_login_user'), [email, uid, userName])
     )
-    const { secret } = res
-    // check if user exists
-    // const exists = await client.query(
-    //   q.Exists(q.Match(q.Index('users_by_email'), email))
-    // )
+    console.log(res)
 
-    // // if user doesn't exist create user
-    // if (!exists) {
-    //   await client.query(
-    //     q.Create(q.Collection('users'), {
-    //       credentials: { password: uid },
-    //       data: {
-    //         email: email,
-    //       },
-    //     })
-    //   )
-    //   console.log('created fauna user')
-    // }
-
-    // // fauna login
-    // const { secret, instance } = await client.query(
-    //   q.Login(q.Match(q.Index('users_by_email'), email), { password: uid })
-    // )
-
-    // console.log('Got fauna secret')
     return {
       statusCode: 200,
-      body: JSON.stringify({ secret }),
+      body: JSON.stringify(res),
     }
   } catch (error) {
     console.log(error)

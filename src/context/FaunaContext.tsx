@@ -1,5 +1,8 @@
-import React, { createContext, useState, useEffect } from 'react'
+import React, { createContext, useState, useEffect, useContext } from 'react'
 import * as faunadb from 'faunadb'
+import { isEmpty } from 'lodash'
+import { AuthContext } from './AuthContext'
+import login from '../utils/login'
 
 interface Props {
   children?: any
@@ -8,6 +11,9 @@ interface Props {
 type StateValue = {
   secret?: string | null
   client?: faunadb.Client | null
+  idRef?: string | null
+  email?: string | null
+  userName?: string | null
 }
 
 export type ContextValue =
@@ -17,21 +23,19 @@ export type ContextValue =
 export const FaunaContext = createContext<ContextValue>([])
 
 export const FaunaProvider: React.FC<Props> = ({ children }) => {
-  const [faunaState, setFaunaState] = useState<StateValue>({
-    secret: null,
-    client: null,
-  })
+  const user = useContext(AuthContext)
+
+  const [faunaState, setFaunaState] = useState<StateValue>({})
 
   useEffect(() => {
-    if (faunaState.secret) {
-      const client = new faunadb.Client({
-        secret: faunaState.secret,
-      })
-      setFaunaState({ client, ...faunaState })
-    } else {
-      setFaunaState({ client: null, secret: null })
+    console.log('faunaState updated', faunaState)
+  }, [faunaState])
+
+  useEffect(() => {
+    if (user && isEmpty(faunaState)) {
+      login({ user, faunaContext: [faunaState, setFaunaState] })
     }
-  }, [faunaState.secret])
+  }, [user])
 
   return (
     <FaunaContext.Provider value={[faunaState, setFaunaState]}>

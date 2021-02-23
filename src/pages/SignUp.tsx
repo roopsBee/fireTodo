@@ -12,6 +12,7 @@ interface Values {
   password: string
   confirmPassword: string
   email: string
+  userName: string
 }
 
 function SignUp() {
@@ -26,16 +27,17 @@ function SignUp() {
           password: '',
           confirmPassword: '',
           email: '',
+          userName: '',
         }}
         validationSchema={signupSchema}
-        onSubmit={async ({ email, password }: Values) => {
+        onSubmit={async ({ email, password, userName }: Values) => {
           try {
             await firebaseApp
               .auth()
               .createUserWithEmailAndPassword(email, password)
             console.log('Created new user')
 
-            await login({ email, password, faunaContext, user })
+            await login({ email, password, faunaContext, user, userName })
           } catch (error) {
             console.log(error)
           }
@@ -43,6 +45,13 @@ function SignUp() {
       >
         {({ isSubmitting }) => (
           <Form>
+            <Field
+              component={TextField}
+              fullWidth
+              name="userName"
+              label="User Name"
+              placeholder="Your username..."
+            />
             <Field
               component={TextField}
               fullWidth

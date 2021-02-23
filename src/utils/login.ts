@@ -3,42 +3,57 @@ import axios from 'axios'
 import firebaseApp from '../firebaseApp'
 import { ContextValue } from '../context/FaunaContext'
 import { FBUser } from '../context/AuthContext'
+import * as faunadb from 'faunadb'
 
 type LoginFn = (values: {
-  email: string
-  password: string
+  email?: string
+  userName?: string
+  password?: string
   user: FBUser
-  faunaContext: ContextValue
+  faunaContext?: ContextValue
 }) => Promise<any>
 
-const login: LoginFn = async ({ email, password, user, faunaContext }) => {
+const login: LoginFn = async ({
+  email,
+  password,
+  user,
+  faunaContext,
+  userName,
+}) => {
   try {
-    const [faunaState, setFaunaState] = faunaContext
-
     // sign in with firebase auth
-    if (!user) {
+    if (!user && email && password) {
       await firebaseApp.auth().signInWithEmailAndPassword(email, password)
       navigate('/App/')
       console.log('Logged in')
+    } else if (!user && (!email || !password)) {
+      console.error('Invalid credentials: password or email missing')
     } else {
       console.log('Already logged in')
     }
 
-    //log into fauna
+    //get firebase id token
     const userIdToken = await firebaseApp.auth().currentUser?.getIdToken(true)
     console.log('Got user id token')
 
     // get faunadb secret with user token
     const { data } = await axios.post('/.netlify/functions/login', {
       userIdToken,
+      userName,
     })
 
-    const { secret } = data
-    console.log('Got fauna secret', data)
+    console.log('Got fauna user data', data)
 
-    setFaunaState
-      ? setFaunaState({ secret })
-      : console.error('setFaunaState failed @ Login')
+    if (faunaContext) {
+      const [faunaState, setFaunaState] = faunaContext
+      const { secret } = data
+      const client = new faunadb.Client({ secret })
+      if (setFaunaState) {
+        setFaunaState({ ...data, client })
+      } else {
+        console.error('setFaunaState failed @ Login')
+      }
+    }
   } catch (error) {
     console.error(error)
   }
