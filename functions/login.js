@@ -8,7 +8,11 @@ const handler = async (event) => {
       await admin.initializeApp({
         credential: admin.credential.cert({
           projectId: process.env.GATSBY_FB_ADMIN_ID,
-          privateKey: process.env.GATSBY_FB_ADMIN_KEY.replace(/\\n/g, '\n'),
+          privateKey:
+            process.env.GATSBY_FB_ADMIN_KEY[0] === '-'
+              ? process.env.GATSBY_FB_ADMIN_KEY
+              : JSON.parse(process.env.GATSBY_FB_ADMIN_KEY),
+          // process.env.GATSBY_FB_ADMIN_KEY.replace(/\\n/g, '\n'),
           clientEmail: process.env.GATSBY_FB_ADMIN_EMAIL,
         }),
       })
