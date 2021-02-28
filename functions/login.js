@@ -3,6 +3,7 @@ const faunadb = require('faunadb')
 
 const handler = async (event) => {
   try {
+    console.log('Initialising admin')
     if (!admin.apps.length) {
       await admin.initializeApp({
         credential: admin.credential.cert({
@@ -14,6 +15,7 @@ const handler = async (event) => {
     }
     console.log('Admin initialized')
 
+    console.log('Veryfying token')
     const { userIdToken, userName } = JSON.parse(event.body)
     const { uid, email } = await admin.auth().verifyIdToken(userIdToken)
     console.log('Got decoded token')
@@ -25,10 +27,11 @@ const handler = async (event) => {
     const q = faunadb.query
 
     // create user if doesn't exist, and get fauna token
+    console.log('logging into fauna')
     const res = await client.query(
       q.Call(q.Function('create_and_login_user'), [email, uid, userName])
     )
-    console.log(res)
+    console.log('logged into fauna', res)
 
     return {
       statusCode: 200,
