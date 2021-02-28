@@ -7,7 +7,7 @@ const handler = async (event) => {
     if (!admin.apps.length) {
       await admin.initializeApp({
         credential: admin.credential.cert({
-          projectId: `${process.env.GATSBY_FB_ADMIN_ID}`,
+          projectId: process.env.GATSBY_FB_ADMIN_ID,
           privateKey:
             process.env.GATSBY_FB_ADMIN_KEY[0] === '-'
               ? process.env.GATSBY_FB_ADMIN_KEY
