@@ -11,9 +11,10 @@ interface Props {
 type StateValue = {
   secret?: string | null
   client?: faunadb.Client | null
-  idRef?: string | null
+  idRef?: {} | null
   email?: string | null
   userName?: string | null
+  loggingIn?: boolean | null
 }
 
 export type ContextValue =
@@ -33,7 +34,10 @@ export const FaunaProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     if (user && isEmpty(faunaState)) {
+      setFaunaState({ loggingIn: true })
       login({ user, faunaContext: [faunaState, setFaunaState] })
+    } else if (!user && faunaState) {
+      setFaunaState({})
     }
   }, [user])
 

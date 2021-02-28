@@ -1,14 +1,12 @@
 import React, { useState, createContext } from 'react'
-import faunadb from 'faunadb'
-import testData from '../testData'
 
 interface Props {
   children?: any
 }
 
-type TodoListType = {
+export type TodoListType = {
   name: string
-  uid: string | null | undefined
+  uid: {} | null | undefined
   listId: object | undefined
   todos: TodoType[]
 }

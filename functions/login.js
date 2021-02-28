@@ -13,6 +13,7 @@ const handler = async (event) => {
       })
     }
     console.log('Admin initialized')
+
     const { userIdToken, userName } = JSON.parse(event.body)
     const { uid, email } = await admin.auth().verifyIdToken(userIdToken)
     console.log('Got decoded token')

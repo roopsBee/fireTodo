@@ -1,16 +1,27 @@
 import { Link } from 'gatsby'
-import PropTypes from 'prop-types'
 import React, { useContext } from 'react'
 import { Button } from '@material-ui/core'
+import faunadb from 'faunadb'
 import { AuthContext } from '../context/AuthContext'
 import firebaseApp from '../firebaseApp'
 import { navigate } from 'gatsby'
+import { FaunaContext } from '../context/FaunaContext'
+import { TodoContext } from '../context/TodoContext'
 
 const Header = () => {
   const user = useContext(AuthContext)
+  const [fauna, setFauna] = useContext(FaunaContext)
+  const [todoLists, setTodoLists] = useContext(TodoContext)
+  const q = faunadb.query
+
   const handleSignOut = () => {
     firebaseApp.auth().signOut()
     navigate('/')
+    fauna?.client?.query(q.Logout(true))
+    if (setFauna && setTodoLists) {
+      setFauna({})
+      setTodoLists([])
+    }
   }
 
   return (

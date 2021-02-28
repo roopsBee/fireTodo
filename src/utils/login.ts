@@ -44,15 +44,23 @@ const login: LoginFn = async ({
 
     console.log('Got fauna user data', data)
 
+    // set fauna context
     if (faunaContext) {
       const [faunaState, setFaunaState] = faunaContext
       const { secret } = data
       const client = new faunadb.Client({ secret })
+      const q = faunadb.query
+
+      const idRef = await client.query(q.CurrentIdentity())
+
       if (setFaunaState) {
-        setFaunaState({ ...data, client })
+        setFaunaState({ ...data, client, idRef })
       } else {
         console.error('setFaunaState failed @ Login')
       }
+    }
+    // get all lists and todos
+    if (user && faunaContext) {
     }
   } catch (error) {
     console.error(error)
