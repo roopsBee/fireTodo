@@ -21,7 +21,7 @@ const handler = async (event) => {
 
     console.log('Veryfying token')
     const { userIdToken, userName } = JSON.parse(event.body)
-    const { uid, email } = await admin.auth().verifyIdToken(userIdToken)
+    const { uid, email } = await admin.auth().verifyIdToken(`${userIdToken}`)
     console.log('Got decoded token')
 
     // fauna init
